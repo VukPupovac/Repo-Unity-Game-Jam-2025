@@ -40,4 +40,10 @@ public class Timer : MonoBehaviour
             timerSlider.value = time;
         }
     }
+
+    public void AddTime(float timeValue)
+    {
+        gameTime += timeValue;
+        timerSlider.value = gameTime;
+    }
 }
