@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using UnityEngine.SceneManagement; // Needed to reload scenes
 
 public class PlayerDeath : MonoBehaviour
 {
@@ -96,25 +97,25 @@ public class PlayerDeath : MonoBehaviour
         rewindTimer = 0f;
         isRewinding = false;
 
-        // Snap player back to the start position
+        // Snap player to start position
         playerGameObject.transform.position = startCoords;
 
-        // Reset and restart the timer ONLY if rewind was triggered by timer
-        if (triggeredByTimer && timerScript != null)
+        // If rewind was triggered by timer, reload scene AFTER rewind
+        if (triggeredByTimer)
         {
-            timerScript.gameTime = timerScript.timerSlider.maxValue;
-            timerScript.timerSlider.value = timerScript.gameTime;
-
-            typeof(Timer)
-                .GetField("stopTimer", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
-                ?.SetValue(timerScript, false);
+            // Small delay to ensure the final frame of rewind is visible
+            yield return null; // You can also increase delay with yield return new WaitForSeconds(0.1f);
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
-        else if (timerScript != null)
+        else
         {
-            // Resume timer if it was hazard-triggered rewind
-            typeof(Timer)
-                .GetField("stopTimer", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
-                ?.SetValue(timerScript, false);
+            // Hazard-triggered rewind: resume timer
+            if (timerScript != null)
+            {
+                typeof(Timer)
+                    .GetField("stopTimer", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                    ?.SetValue(timerScript, false);
+            }
         }
     }
 }
