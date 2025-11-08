@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class PlayerMovementTimeControlled : TimeControlled
@@ -17,10 +18,17 @@ public class PlayerMovementTimeControlled : TimeControlled
     private float wallJumpingDuration = 0.2f;
     private Vector2 wallJumpingPower = new Vector2(8f, 16f);
 
+    private bool canDash = true;
+    private bool isDashing;
+    public float dashingSpeed = 24f;
+    public float dashingDuration = 0.2f;
+    public float dashingCooldown = 1f;
+
     [SerializeField] private Transform groundCheck;
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private Transform wallCheck;
     [SerializeField] private LayerMask wallLayer;
+    [SerializeField] private TrailRenderer tr;
     [SerializeField] private Animator animator; // Optional: for animations
 
     protected override void Awake()
@@ -30,6 +38,7 @@ public class PlayerMovementTimeControlled : TimeControlled
 
     private void Update()
     {
+        
         // Update rewind animation
         if (animator != null)
         {
@@ -38,7 +47,9 @@ public class PlayerMovementTimeControlled : TimeControlled
         
         // Don't allow input during rewind
         if (isRewinding) return;
-        
+
+        if (isDashing) return;
+
         horizontal = Input.GetAxisRaw("Horizontal");
 
         // Update walking animation
@@ -70,6 +81,11 @@ public class PlayerMovementTimeControlled : TimeControlled
         {
             Flip();
         }
+
+        if (Input.GetKeyDown(KeyCode.LeftShift) && canDash)
+        {
+            StartCoroutine(Dash());
+        }
     }
 
     protected override void FixedUpdate()
@@ -78,7 +94,9 @@ public class PlayerMovementTimeControlled : TimeControlled
         
         // Don't apply movement during rewind
         if (isRewinding) return;
-        
+
+        if (isDashing) return;
+
         if (!isWallJumping)
         {
             rb.velocity = new Vector2(horizontal * speed, rb.velocity.y);
@@ -155,5 +173,21 @@ public class PlayerMovementTimeControlled : TimeControlled
             localScale.x *= -1f;
             transform.localScale = localScale;
         }
+    }
+
+    private IEnumerator Dash()
+    {
+        canDash = false;
+        isDashing = true;
+        float originalGravity = rb.gravityScale;
+        rb.gravityScale = 0f;
+        rb.velocity = new Vector2(transform.localScale.x * dashingSpeed, 0f);
+        tr.emitting = true;
+        yield return new WaitForSeconds(dashingDuration);
+        tr.emitting = false;
+        rb.gravityScale = originalGravity;
+        isDashing = false;
+        yield return new WaitForSeconds(dashingCooldown);
+        canDash = true;
     }
 }
