@@ -94,7 +94,7 @@ public class PlayerMovementTimeControlled : TimeControlled
         if (isWallSliding)
         {
             isWallJumping = false;
-            wallJumpingDirection = -transform.localScale.x;
+            wallJumpingDirection = -Mathf.Sign(transform.localScale.x);
             wallJumpingCounter = wallJumpingTime;
 
             CancelInvoke(nameof(StopWallJumping));
