@@ -40,10 +40,13 @@ public class TreadmillPlatform : MonoBehaviour
     {
         if (treadmillSpeed != 0)
         {
+            Collider2D collider = GetComponent<Collider2D>();
+            if (collider == null) return; // Skip if no collider
+            
             // Gizmos logic adapted for speed (velocity)
             Gizmos.color = (treadmillSpeed < 0) ? Color.red : Color.green;
             // Draw an arrow indicating the direction and magnitude of the speed
-            Vector3 center = transform.position + new Vector3(0, GetComponent<Collider2D>().bounds.size.y / 2 + 0.5f, 0);
+            Vector3 center = transform.position + new Vector3(0, collider.bounds.size.y / 2 + 0.5f, 0);
             Vector3 end = center + new Vector3(treadmillSpeed * 0.5f, 0, 0); // Scale the visual based on speed
             
             // Draw the main line
