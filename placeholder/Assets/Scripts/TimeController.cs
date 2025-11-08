@@ -4,7 +4,8 @@ using UnityEngine;
 public class TimeController : MonoBehaviour
 {
     public static float gravity = 100;
-
+    public float rewindSpeed = 0.5f; // 0.5 = half speed, 2 = double speed
+    private float rewindTimer = 0f;
 
     public struct RecordedData
     {
@@ -31,14 +32,36 @@ public class TimeController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        bool stepBack = Input.GetKey(KeyCode.LeftArrow);
+        bool stepBack = Input.GetKey(KeyCode.R);
 
         if (stepBack)
         {
+            // Tell all objects they're rewinding
             foreach(TimeControlled timeObject in timeObjects)
             {
-                timeObject.TimedUpdate();
+                timeObject.StartRewind();
             }
+            
+            rewindTimer += Time.deltaTime * rewindSpeed;
+            
+            // Only rewind when timer reaches the next frame interval
+            while (rewindTimer >= Time.fixedDeltaTime)
+            {
+                foreach(TimeControlled timeObject in timeObjects)
+                {
+                    timeObject.TimedUpdate();
+                }
+                rewindTimer -= Time.fixedDeltaTime;
+            }
+        }
+        else
+        {
+            // Stop rewinding
+            foreach(TimeControlled timeObject in timeObjects)
+            {
+                timeObject.StopRewind();
+            }
+            rewindTimer = 0f; // Reset when not rewinding
         }
 
     }

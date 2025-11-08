@@ -29,6 +29,9 @@ public class PlayerMovementTimeControlled : TimeControlled
 
     private void Update()
     {
+        // Don't allow input during rewind
+        if (isRewinding) return;
+        
         horizontal = Input.GetAxisRaw("Horizontal");
 
         if (Input.GetButtonDown("Jump") && IsGrounded())
@@ -53,6 +56,9 @@ public class PlayerMovementTimeControlled : TimeControlled
     protected override void FixedUpdate()
     {
         base.FixedUpdate(); // Records state for time rewind
+        
+        // Don't apply movement during rewind
+        if (isRewinding) return;
         
         if (!isWallJumping)
         {

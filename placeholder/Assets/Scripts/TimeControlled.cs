@@ -10,7 +10,7 @@ public class TimeControlled : MonoBehaviour
     private List<Vector3> positionHistory = new List<Vector3>();
     private List<Vector2> velocityHistory = new List<Vector2>();
     private int maxRecordings = 1000; // Store last 1000 frames
-    private bool isRewinding = false;
+    protected bool isRewinding = false;
     
     protected Rigidbody2D rb;
 
