@@ -14,7 +14,6 @@ public class TimeController : MonoBehaviour
     }
 
     readonly RecordedData[][] recordedData;
-    int recordMax = 100000;
     TimeControlled[] timeObjects;
     private void Awake()
     {

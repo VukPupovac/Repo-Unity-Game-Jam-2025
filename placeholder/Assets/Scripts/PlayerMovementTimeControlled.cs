@@ -21,6 +21,7 @@ public class PlayerMovementTimeControlled : TimeControlled
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private Transform wallCheck;
     [SerializeField] private LayerMask wallLayer;
+    [SerializeField] private Animator animator; // Optional: for animations
 
     protected override void Awake()
     {
@@ -33,6 +34,18 @@ public class PlayerMovementTimeControlled : TimeControlled
         if (isRewinding) return;
         
         horizontal = Input.GetAxisRaw("Horizontal");
+
+        // Update walking animation
+        if (animator != null)
+        {
+            bool isWalking = horizontal != 0f;
+            animator.SetBool("IsWalking", isWalking);
+            Debug.Log($"Horizontal: {horizontal}, IsWalking: {isWalking}, Animator: {animator.name}");
+        }
+        else
+        {
+            Debug.LogWarning("Animator is NULL! Assign it in the Inspector.");
+        }
 
         if (Input.GetButtonDown("Jump") && IsGrounded())
         {
