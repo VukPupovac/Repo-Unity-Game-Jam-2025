@@ -30,6 +30,12 @@ public class PlayerMovementTimeControlled : TimeControlled
 
     private void Update()
     {
+        // Update rewind animation
+        if (animator != null)
+        {
+            animator.SetBool("IsRewinding", isRewinding);
+        }
+        
         // Don't allow input during rewind
         if (isRewinding) return;
         
