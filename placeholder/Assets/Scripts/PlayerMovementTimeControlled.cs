@@ -181,7 +181,7 @@ public class PlayerMovementTimeControlled : TimeControlled
         isDashing = true;
         float originalGravity = rb.gravityScale;
         rb.gravityScale = 0f;
-        rb.velocity = new Vector2(transform.localScale.x * dashingSpeed, 0f);
+        rb.velocity = new Vector2(transform.localScale.x/4 * dashingSpeed, 0f);
         tr.emitting = true;
         yield return new WaitForSeconds(dashingDuration);
         tr.emitting = false;
