@@ -208,7 +208,7 @@ Transform:
   m_GameObject: {fileID: 186902379}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -3.92, y: -2.08, z: 0}
+  m_LocalPosition: {x: -3.92, y: -1.816, z: 0}
   m_LocalScale: {x: 4, y: 4, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -513,10 +513,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74669965cd5db644c8db7c91958d818c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  deathScreenUI: {fileID: 0}
-  rewindSpeed: 0.5
+  maxRewindTime: 5
   playerGameObject: {fileID: 186902379}
   playerInfoScript: {fileID: 186902392}
+  timerScript: {fileID: 1876079522}
 --- !u!1 &355934607
 GameObject:
   m_ObjectHideFlags: 0
@@ -963,6 +963,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 253998851009641590, guid: fb2c0549dc039d6408c1ffd8c62e740f, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3165357638131827389, guid: fb2c0549dc039d6408c1ffd8c62e740f, type: 3}
       propertyPath: m_LocalPosition.x
       value: 670.1488
@@ -1006,6 +1010,14 @@ PrefabInstance:
     - target: {fileID: 4668056485145362561, guid: fb2c0549dc039d6408c1ffd8c62e740f, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5574193954559695774, guid: fb2c0549dc039d6408c1ffd8c62e740f, type: 3}
+      propertyPath: m_TargetGraphic
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 5678959684981411087, guid: fb2c0549dc039d6408c1ffd8c62e740f, type: 3}
+      propertyPath: gameTime
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 9115097353636086176, guid: fb2c0549dc039d6408c1ffd8c62e740f, type: 3}
       propertyPath: m_Name
@@ -1983,6 +1995,17 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &1876079522 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5678959684981411087, guid: fb2c0549dc039d6408c1ffd8c62e740f, type: 3}
+  m_PrefabInstance: {fileID: 380821096}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0dd657e2c39e8b047bcf8c0758bb7ae8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1946170461
 GameObject:
   m_ObjectHideFlags: 0
