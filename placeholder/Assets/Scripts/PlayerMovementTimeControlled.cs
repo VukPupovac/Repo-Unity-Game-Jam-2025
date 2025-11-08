@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 
 public class PlayerMovementTimeControlled : TimeControlled
-{
+{ 
     private float horizontal;
     public float speed = 8f;
     public float jumpingPower = 16f;
