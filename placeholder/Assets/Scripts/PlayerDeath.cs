@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement; // Needed to reload scenes
 public class PlayerDeath : MonoBehaviour
 {
     [Header("Rewind Settings")]
-    public float rewindSpeed = 0.5f; // How fast the rewind plays back
+    public float maxRewindTime = 5f; // Maximum rewind duration in seconds
 
     [Header("References")]
     public GameObject playerGameObject;
@@ -23,15 +23,36 @@ public class PlayerDeath : MonoBehaviour
     {
         // Find all objects that are time-controlled
         timeObjects = FindObjectsOfType<TimeControlled>();
+        
+        // Debug: Check if references are set
+        Debug.Log("PlayerDeath Awake - timerScript assigned: " + (timerScript != null));
+        Debug.Log("PlayerDeath Awake - playerGameObject assigned: " + (playerGameObject != null));
     }
 
     private void Update()
     {
-        // Timer-based rewind
-        if (!isRewinding && timerScript != null && timerScript.gameTime <= 0f)
+        // Timer-based rewind - check if timer just ran out
+        if (timerScript != null)
         {
-            triggeredByTimer = true;
-            StartRewind();
+            // Debug every frame to see the timer value
+            if (Time.frameCount % 50 == 0) // Log every 50 frames to avoid spam
+            {
+                Debug.Log($"Timer check: gameTime = {timerScript.gameTime}, isRewinding = {isRewinding}");
+            }
+            
+            if (!isRewinding && timerScript.gameTime <= 0.01f)
+            {
+                Debug.Log("Timer expired! Starting rewind...");
+                triggeredByTimer = true;
+                StartRewind();
+            }
+        }
+        else
+        {
+            if (Time.frameCount % 300 == 0) // Log occasionally
+            {
+                Debug.LogWarning("PlayerDeath: timerScript is NULL! Assign it in the Inspector.");
+            }
         }
     }
 
@@ -49,8 +70,12 @@ public class PlayerDeath : MonoBehaviour
     {
         if (isRewinding) return;
 
+        Debug.Log("StartRewind called. Triggered by timer: " + triggeredByTimer);
+
         playerInfoScript = playerGameObject.GetComponent<PlayerStartInfo>();
         Vector3 startCoords = playerInfoScript.originalPosition;
+
+        Debug.Log("Starting rewind to position: " + startCoords);
 
         StartCoroutine(RewindToStart(startCoords));
     }
@@ -59,7 +84,7 @@ public class PlayerDeath : MonoBehaviour
     {
         isRewinding = true;
 
-        // Stop the timer while rewinding
+        // Force stop the timer while rewinding (in case it's still ticking)
         if (timerScript != null)
         {
             typeof(Timer)
@@ -72,10 +97,42 @@ public class PlayerDeath : MonoBehaviour
             timeObject.StartRewind();
         }
 
+        // Get the actual number of recorded frames from the player
+        TimeControlled playerTimeControlled = playerGameObject.GetComponent<TimeControlled>();
+        int actualFramesRecorded = 0;
+        
+        if (playerTimeControlled != null)
+        {
+            // Use reflection to get the actual positionHistory count
+            var positionHistoryField = typeof(TimeControlled).GetField("positionHistory", 
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            
+            if (positionHistoryField != null)
+            {
+                var historyList = positionHistoryField.GetValue(playerTimeControlled) as System.Collections.IList;
+                if (historyList != null)
+                {
+                    actualFramesRecorded = historyList.Count;
+                }
+            }
+        }
+
+        // Calculate natural rewind time based on recorded frames (at 50fps)
+        float naturalRewindTime = actualFramesRecorded / 50f;
+        
+        // Cap at maximum rewind time, but use natural time if shorter
+        float targetRewindDuration = Mathf.Min(naturalRewindTime, maxRewindTime);
+        
+        // Calculate speed to rewind within target duration
+        float framesPerSecond = (targetRewindDuration > 0) ? actualFramesRecorded / targetRewindDuration : 50f;
+        float dynamicRewindSpeed = framesPerSecond / 50f;
+
+        Debug.Log($"Rewind: {actualFramesRecorded} frames ({naturalRewindTime:F2}s natural), capped to {targetRewindDuration:F2}s at {dynamicRewindSpeed:F2}x speed");
+
         // Perform rewind until player reaches starting point
         while (Vector3.Distance(playerGameObject.transform.position, startCoords) > 0.05f)
         {
-            rewindTimer += Time.deltaTime * rewindSpeed;
+            rewindTimer += Time.deltaTime * dynamicRewindSpeed;
 
             while (rewindTimer >= Time.fixedDeltaTime)
             {
@@ -100,16 +157,16 @@ public class PlayerDeath : MonoBehaviour
         // Snap player to start position
         playerGameObject.transform.position = startCoords;
 
-        // If rewind was triggered by timer, reload scene AFTER rewind
+        // If rewind was triggered by timer expiring, reload scene to reset timer and clocks
         if (triggeredByTimer)
         {
-            // Small delay to ensure the final frame of rewind is visible
-            yield return null; // You can also increase delay with yield return new WaitForSeconds(0.1f);
+            Debug.Log("Rewind complete! Reloading scene...");
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
         else
         {
-            // Hazard-triggered rewind: resume timer
+            Debug.Log("Rewind complete! Resuming timer...");
+            // Hazard-triggered rewind: resume timer so player can continue
             if (timerScript != null)
             {
                 typeof(Timer)
