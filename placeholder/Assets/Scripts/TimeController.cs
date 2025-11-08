@@ -3,11 +3,13 @@ using UnityEngine;
 
 public class TimeController : MonoBehaviour
 {
+    public Animator animator;
     public static float gravity = 100;
     public float rewindSpeed = 0.5f; // 0.5 = half speed, 2 = double speed
     private float rewindTimer = 0f;
 
     public struct RecordedData
+
     {
         public Vector2 pos;
         public Vector3 vel;
