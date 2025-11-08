@@ -830,27 +830,11 @@ MonoBehaviour:
   groundCheck: {fileID: 1490835053}
   groundLayer:
     serializedVersion: 2
-<<<<<<< Updated upstream
     m_Bits: 192
   wallCheck: {fileID: 1453013743}
   wallLayer:
     serializedVersion: 2
     m_Bits: 192
-=======
-<<<<<<< HEAD
-    m_Bits: 64
-  wallCheck: {fileID: 1453013743}
-  wallLayer:
-    serializedVersion: 2
-    m_Bits: 128
-=======
-    m_Bits: 192
-  wallCheck: {fileID: 1453013743}
-  wallLayer:
-    serializedVersion: 2
-    m_Bits: 192
->>>>>>> 00d79799348a2afd09f38399f319db62f9c4a326
->>>>>>> Stashed changes
 --- !u!1 &1318402598
 GameObject:
   m_ObjectHideFlags: 0
