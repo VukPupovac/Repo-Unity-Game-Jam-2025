@@ -126,7 +126,7 @@ public class PlayerDeath : MonoBehaviour
             rewindElapsedTime += Time.deltaTime;
 
             // Safety: If rewind takes longer than maxRewindTime, something is wrong - force scene reload
-            if (rewindElapsedTime >= maxRewindTime)
+            if (rewindElapsedTime >= 6f)
             {
                 Debug.LogWarning($"Rewind exceeded max time ({maxRewindTime}s). Game may be in failed state. Force reloading scene.");
                 SceneManager.LoadScene(SceneManager.GetActiveScene().name);
