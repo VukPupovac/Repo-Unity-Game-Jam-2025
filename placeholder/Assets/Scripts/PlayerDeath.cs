@@ -50,7 +50,19 @@ public class PlayerDeath : MonoBehaviour
         if (isRewinding) return;
 
         playerInfoScript = playerGameObject.GetComponent<PlayerStartInfo>();
-        Vector3 startCoords = playerInfoScript.originalPosition;
+        
+        // Choose which position to rewind to based on why we're rewinding
+        Vector3 startCoords;
+        if (triggeredByTimer)
+        {
+            // Timer ran out - go back to ORIGINAL spawn point (scene will reload after)
+            startCoords = playerInfoScript.originalPosition;
+        }
+        else
+        {
+            // Hazard death - go back to current checkpoint
+            startCoords = playerInfoScript.currentCheckpoint;
+        }
 
         StartCoroutine(RewindToStart(startCoords));
     }
@@ -103,9 +115,23 @@ public class PlayerDeath : MonoBehaviour
         float dynamicRewindSpeed = framesPerSecond / 50f;
 
         // Perform rewind until player reaches starting point
+        float distanceToTarget = Vector3.Distance(playerGameObject.transform.position, startCoords);
+        Debug.Log($"Starting rewind. Distance to target: {distanceToTarget}, triggeredByTimer: {triggeredByTimer}");
+        
+        float rewindElapsedTime = 0f;
+        
         while (Vector3.Distance(playerGameObject.transform.position, startCoords) > 0.05f)
         {
             rewindTimer += Time.deltaTime * dynamicRewindSpeed;
+            rewindElapsedTime += Time.deltaTime;
+
+            // Safety: If rewind takes longer than maxRewindTime and timer expired, force scene reload
+            if (triggeredByTimer && rewindElapsedTime >= maxRewindTime)
+            {
+                Debug.LogWarning($"Rewind exceeded max time ({maxRewindTime}s). Force reloading scene.");
+                SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+                yield break; // Exit coroutine immediately
+            }
 
             while (rewindTimer >= Time.fixedDeltaTime)
             {
@@ -118,6 +144,8 @@ public class PlayerDeath : MonoBehaviour
 
             yield return null;
         }
+
+        Debug.Log($"Rewind complete. triggeredByTimer = {triggeredByTimer}, final distance = {Vector3.Distance(playerGameObject.transform.position, startCoords)}");
 
         foreach (TimeControlled timeObject in timeObjects)
         {
@@ -133,10 +161,12 @@ public class PlayerDeath : MonoBehaviour
         // If rewind was triggered by timer expiring, reload scene to reset timer and clocks
         if (triggeredByTimer)
         {
+            Debug.Log("Timer triggered - reloading scene NOW");
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
         else
         {
+            Debug.Log("Hazard triggered - resuming timer");
             // Hazard-triggered rewind: resume timer so player can continue
             if (timerScript != null)
             {
