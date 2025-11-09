@@ -11,10 +11,22 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Tutorial text.unity
     guid: 950f9200d7ff53644ae8f05f8fa4ac3e
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Ben Test Scene.unity
     guid: ce5707c5802dce949a2daf61e7674cc5
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Ben Test Scene 2.unity
     guid: 4499b012e9b33e749989fde7772f88b5
+  - enabled: 1
+    path: Assets/Scenes/Level 1.unity
+    guid: 8bfa56f52dcd26a489a3c7e25bc514a1
+  - enabled: 1
+    path: Assets/Scenes/Level 2.unity
+    guid: 8749b4d39b33f764dbd7846a25fdcb03
+  - enabled: 1
+    path: Assets/Scenes/Vuk Test.unity
+    guid: a5097c6b0a63a414a8bcf5c29e52e235
+  - enabled: 1
+    path: Assets/Scenes/Level 4.unity
+    guid: 757e63c0e1e0a4e419bd6c8ac3f93f60
   m_configObjects: {}
